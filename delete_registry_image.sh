@@ -8,19 +8,26 @@
 registry='registry.domain.com'
 list_limit=10000
 name='some-image'
-delete_tag='dev'
+delete_tag_list='dev dev'
+
+function exists_in_list() {
+    list=$1
+    delimiter=$2
+    value=$3
+    echo $list | tr "$delimiter" '\n' | grep -F -q -x "$value"
+}
  
 for tag in $(curl -k -s -X GET https://${registry}/v2/_catalog?n=${list_limit} | jq '.repositories[]' | sort | grep "${name}" | xargs -I _ curl -s -k -X GET https://${registry}/v2/_/tags/list | jq '.tags' | sed 's/[",, ]//g' | sort );
  
 do
  
-if [[ $tag = $delete_tag ]];
-then
+if exists_in_list "$delete_tag_list" " " $tag;
+then 
  
 curl -X DELETE -sI -k "https://${registry}/v2/${name}/manifests/$(
   curl -sI -k \
     -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-    "https://${registry}/v2/${name}/manifests/${delete_tag}" \
+    "https://${registry}/v2/${name}/manifests/${tag}" \
     | tr -d '\r' | sed -En 's/^Docker-Content-Digest: (.*)/\1/pi'
 )";
  
