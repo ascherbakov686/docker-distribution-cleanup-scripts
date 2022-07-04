@@ -3,7 +3,7 @@
  
 #
 # Get tag list for specific image
-# curl -k -s -X GET https://registry.avp.ru:1443/v2/_catalog?n=10000 | jq '.repositories[]' | sort | grep "demo-iis-win-auth" | xargs -I _ curl -s -k -X GET https://registry.avp.ru:1443/v2/_/tags/list | jq '.tags' | sed 's/[",, ]//g' | sort | tr '\n' ' '
+# curl -k -s -X GET https://registry:1443/v2/_catalog?n=10000 | jq '.repositories[]' | sort | grep "demo-iis-win-auth" | xargs -I _ curl -s -k -X GET https://registry:1443/v2/_/tags/list | jq '.tags' | sed 's/[",, ]//g' | sort | tr '\n' ' '
 #
  
 registry='registry.domain.com'
